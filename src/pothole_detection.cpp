@@ -35,7 +35,7 @@ public:
 private:
     // Callbacks
     void imageCb(const sensor_msgs::ImageConstPtr& msg);
-    void configCB(actor_obstacle::PotholeConfig &config, uint32_t level);
+    void configCB(ltu_actor_route_pothole::PotholeConfig &config, uint32_t level);
 
     // Run sign detection
     void detectAndDisplay(cv::Mat& frame);
@@ -48,8 +48,8 @@ private:
     ros::Publisher trigger_pub_;
 
     // Dynamic reconfigure server
-    dynamic_reconfigure::Server<actor_obstacle::PotholeConfig> server_;
-    actor_obstacle::PotholeConfig config_;
+    dynamic_reconfigure::Server<ltu_actor_route_pothole::PotholeConfig> server_;
+    ltu_actor_route_pothole::PotholeConfig config_;
 
     bool pothole_detected_;
 };
@@ -82,7 +82,7 @@ PotholeDetection::PotholeDetection() : nh_("~"), it_(nh_)
     pothole_detected_ = false;
 }
 
-void PotholeDetection::configCB(actor_obstacle::PotholeConfig &config, uint32_t level)
+void PotholeDetection::configCB(ltu_actor_route_pothole::PotholeConfig &config, uint32_t level)
 {
     config_ = config;
 }
