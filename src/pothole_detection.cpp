@@ -32,6 +32,19 @@ class PotholeDetection
 public:
     PotholeDetection();
 
+    bool isEnabled() {return enabled;}
+    void shutdown() {
+        image_sub_ = image_transport::Subscriber();
+        enabled =  false;
+    }
+    void startup(){
+        image_sub_ = it_.subscribe(dashcam_topic, 1, &PotholeDetection::imageCb, this);
+        enabled = true;
+    }
+    bool hasSub(){
+        return (trigger_pub_.getNumSubscribers() || image_pub_.getNumSubscribers()) > 0;
+    }
+
 private:
     // Callbacks
     void imageCb(const sensor_msgs::ImageConstPtr& msg);
@@ -47,6 +60,9 @@ private:
     image_transport::Publisher image_pub_; // debug pub
     ros::Publisher trigger_pub_;
 
+    std::string dashcam_topic;
+    bool enabled = true;
+
     // Dynamic reconfigure server
     dynamic_reconfigure::Server<ltu_actor_route_pothole::PotholeConfig> server_;
     ltu_actor_route_pothole::PotholeConfig config_;
@@ -58,17 +74,11 @@ PotholeDetection::PotholeDetection() : nh_("~"), it_(nh_)
 {
     // Subscribe to camera
     std::string dashcam_topic;
-    //if (nh_.getParam("/actor_input/dashcam", dashcam_topic))
-    //{
-        //ROS_INFO_STREAM("blob: using video source " << dashcam_topic << "...");
-    //}
-    //else
-    //{
-        //dashcam_topic = "/actor_input/camera/image_raw/";
-        //ROS_ERROR_STREAM("param '/actor_input/dashcam' not defined, using default topic: " << dashcam_topic);
-    //}
-
-    dashcam_topic = "/actor_input/cam_repub/image_raw";
+    if (!nh_.getParam("input", dashcam_topic))
+    {
+        ROS_ERROR_STREAM("No lidar topic passed to " + dashcam_topic);
+        throw std::invalid_argument("Bad lidar topic.");
+    }
 
     image_sub_ = it_.subscribe(dashcam_topic, 1, &PotholeDetection::imageCb, this);
 
@@ -192,6 +202,20 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "pothole_detection");
     PotholeDetection pd;
 
-    ros::spin();
+    ros::Rate r(10); 
+
+    while (ros::ok()){
+        if (pd.hasSub()){
+            if (!pd.isEnabled()){
+                pd.startup();
+            }
+        } else {
+            if (pd.isEnabled()){
+                pd.shutdown();
+            }
+        }
+        ros::spinOnce();
+        r.sleep();
+    }
     return 0;
 }

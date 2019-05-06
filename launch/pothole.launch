@@ -1,5 +1,3 @@
-Example Launch File
-
 <launch>
     <node pkg="ltu_actor_route_pothole" type="pothole" name="pothole">
         <param name="input" value="camera/image_raw" />
