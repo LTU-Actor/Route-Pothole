@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   rospy
   dynamic_reconfigure
+  message_generation
 )
 
 find_package(OpenCV REQUIRED)
