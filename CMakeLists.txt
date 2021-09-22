@@ -28,12 +28,6 @@ generate_dynamic_reconfigure_options(
  cfg/Pothole.cfg
 )
 
-generate_messages(
-    DEPENDENCIES
-    std_msgs
-)
-
-
 
 ###################################
 ## catkin specific configuration ##
