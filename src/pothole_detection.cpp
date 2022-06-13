@@ -79,6 +79,8 @@ PotholeDetection::PotholeDetection() : nh_("~"), it_(nh_)
         ROS_ERROR_STREAM("No lidar topic passed to " + dashcam_topic);
         throw std::invalid_argument("Bad lidar topic.");
     }
+    
+    //ROS_INFO_STREAM("dashcam_topic = " + dashcam_topic);
 
     image_sub_ = it_.subscribe(dashcam_topic, 1, &PotholeDetection::imageCb, this);
 
@@ -122,7 +124,7 @@ void PotholeDetection::detectAndDisplay( cv::Mat& frame )
     auto roi_rect = cv::Rect(xlo, ylo, xhi, yhi);
     cv::cvtColor( frame, frame_gray, CV_BGR2GRAY );
 
-    ROS_INFO_STREAM(xlo << ", " << ylo << "; " << xhi << ", " << yhi);
+    //ROS_INFO_STREAM(xlo << ", " << ylo << "; " << xhi << ", " << yhi);
     auto roi = cv::Mat(frame_gray, roi_rect);
 
     // Count white pixels in roi
@@ -142,7 +144,7 @@ void PotholeDetection::detectAndDisplay( cv::Mat& frame )
         cv::rectangle(frame, roi_rect, cv::Scalar(255,0,0), thickness/2);
     }
     
-    ROS_INFO_STREAM("count: " << count << ", found: " << found);
+    //ROS_INFO_STREAM("count: " << count << ", found: " << found);
 
 
     // Count the number of valid consecutive sign frames
@@ -153,10 +155,13 @@ void PotholeDetection::detectAndDisplay( cv::Mat& frame )
     //ROS_INFO_STREAM("sign frames: " << frame_count);
     if (found) {
         frame_count++;
+        //ROS_INFO_STREAM("Found");
         if (frame_count > config_.frame_count_trigger) {
             pothole_detected_ = true;
+            //ROS_INFO_STREAM("Pothole Detected");
         }
     } else {
+    	//ROS_INFO_STREAM("Not Found");
         pothole_detected_ = false;
         frame_count = 0;
     }
@@ -175,6 +180,7 @@ void PotholeDetection::detectAndDisplay( cv::Mat& frame )
 void PotholeDetection::imageCb(const sensor_msgs::ImageConstPtr& msg)
 {
     //Convert to cv image
+    ROS_INFO_STREAM("oogly boogly");
     cv_bridge::CvImagePtr cv_ptr;
     try
     {
@@ -188,9 +194,10 @@ void PotholeDetection::imageCb(const sensor_msgs::ImageConstPtr& msg)
 
     detectAndDisplay(cv_ptr->image);
 
-    if (image_pub_.getNumSubscribers() > 0) {
-            image_pub_.publish(cv_bridge::CvImage(std_msgs::Header(), "bgr8", cv_ptr->image).toImageMsg());
-    }
+    //if (image_pub_.getNumSubscribers() > 0) {
+    //We don't want it to be efficient, we need it to work.		
+    image_pub_.publish(cv_bridge::CvImage(std_msgs::Header(), "bgr8", cv_ptr->image).toImageMsg());
+    //}
 
     cv::waitKey(3);
 
@@ -211,7 +218,7 @@ int main(int argc, char** argv)
             }
         } else {
             if (pd.isEnabled()){
-                pd.shutdown();
+                //pd.shutdown();
             }
         }
         ros::spinOnce();

@@ -1,5 +1,5 @@
 <launch>
-    <node pkg="ltu_actor_route_pothole" type="pothole" name="pothole">
-        <param name="input" value="camera/image_raw" />
+    <node pkg="ltu_actor_route_pothole" type="pothole_detection" name="pothole_detection" output="screen">
+        <param name="input" value="/cam_repub_blob/image" />
     </node>
 </launch>

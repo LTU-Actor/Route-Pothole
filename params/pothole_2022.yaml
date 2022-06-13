@@ -1,0 +1,29 @@
+!!python/object/new:dynamic_reconfigure.encoding.Config
+dictitems:
+  bin_thresh: 144
+  frame_count_trigger: 2
+  groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+    dictitems:
+      bin_thresh: 144
+      frame_count_trigger: 2
+      groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      id: 0
+      name: Default
+      parameters: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      parent: 0
+      pixel_count_thresh: 302
+      state: true
+      type: ''
+      xhi: 300
+      xlo: 361
+      yhi: 185
+      ylo: 494
+    state: []
+  pixel_count_thresh: 302
+  xhi: 300
+  xlo: 361
+  yhi: 185
+  ylo: 494
+state: []
